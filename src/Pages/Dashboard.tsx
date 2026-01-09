@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -14,136 +14,178 @@ import {
   Cell,
 } from "recharts";
 import { IoIosArrowRoundUp, IoIosArrowRoundDown } from "react-icons/io";
-// import Salad from "/images/salad.png";
-// import Noodles from "/images/noodles.png";
-// import Smoothie from "/images/smoothie.png";
-// import Wings from "/images/wings.png";  
 
-
-// Mock API Functions
-const API = {
-  getRevenueData: async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          total: 7852000,
-          change: 2.1,
-          period: "1-12 Dec, 2020",
-          data: [
-            { day: '01', last6days: 450000, lastWeek: 420000 },
-            { day: '02', last6days: 520000, lastWeek: 480000 },
-            { day: '03', last6days: 580000, lastWeek: 540000 },
-            { day: '04', last6days: 490000, lastWeek: 510000 }, // highlighted
-            { day: '05', last6days: 750000, lastWeek: 600000 },
-            { day: '06', last6days: 680000, lastWeek: 620000 },
-            { day: '07', last6days: 720000, lastWeek: 650000 },
-            { day: '08', last6days: 550000, lastWeek: 580000 },
-            { day: '09', last6days: 620000, lastWeek: 600000 },
-            { day: '10', last6days: 590000, lastWeek: 610000 },
-            { day: '11', last6days: 850000, lastWeek: 700000 },
-            { day: '12', last6days: 780000, lastWeek: 680000 },
-          ],
-        });
-      }, 500);
-    });
-  },
-
-  getOrderTimeData: async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          total: 1890,
-          period: "1-6 Dec, 2020",
-          breakdown: [
-            { name: "Morning", time: "8am - 12pm", value: 1200, color: "#C7CEFF" },
-            { name: "Afternoon", time: "1pm - 4pm", value: 1890, color: "#5A6ACF" },
-            { name: "Evening", time: "5pm - 8pm", value: 910, color: "#8593ED" },
-          ],
-        });
-      }, 500);
-    });
-  },
-
-  getRatingsData: async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { label: "Hygiene", value: 85, color: "#6463D6", size: 80, position: "top-0 left-16" },
-          { label: "Packaging", value: 92, color: "#2FBFDE", position: "top-24 left-0" },
-          { label: "Food Taste", value: 74, color: "#F99C30", position: "top-12 left-28" },
-        ]);
-      }, 500);
-    });
-  },
-
-  getMostOrderedFoods: async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { name: "Fresh Salad Bowl", price: 45.000, image: "/images/salad-bowl.png" },
-        { name: "Chicken Noodles", price: 75.000, image: "/images/noodles.png" },
-        { name: "Smoothie Fruits", price: 45.000, image: "/images/smoothie.png" },
-        { name: "Hot Chicken Wings", price: 45.000, image: "/images/wings.png" },
-      ]);
-    }, 500);
-  });
-},
-
-  getOrderTrendData: async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          total: 2568,
-          change: 2.1,
-          period: "1-6 Dec, 2020",
-          data: [
-            { day: "01", last6days: 280, lastWeek: 350 },
-            { day: "02", last6days: 220, lastWeek: 200 },
-            { day: "03", last6days: 400, lastWeek: 240 },
-            { day: "04", last6days: 250, lastWeek: 260 },
-            { day: "05", last6days: 320, lastWeek: 490 },
-            { day: "06", last6days: 380, lastWeek: 340 },
-          ],
-        });
-      }, 500);
-    });
-  },
+// Types Definition
+type RevenueItem = { day: string; last6days: number; lastWeek: number };
+type RevenueData = {
+  total: number;
+  change: number;
+  period: string;
+  data: RevenueItem[];
 };
 
+type OrderTimeBreakdown = { name: string; time: string; value: number; color: string };
+type OrderTimeData = {
+  total: number;
+  period: string;
+  breakdown: OrderTimeBreakdown[];
+};
+
+type Rating = {
+  label: string;
+  value: number;
+  color: string;
+  size?: number;
+  position?: string;
+};
+
+type Food = {
+  name: string;
+  price: number;
+  image: string;
+};
+
+type OrderTrendItem = { day: string; last6days: number; lastWeek: number };
+type OrderTrendData = {
+  total: number;
+  change: number;
+  period: string;
+  data: OrderTrendItem[];
+};
+
+type TooltipProps = { active?: boolean; payload?: any[] };
+
+// ----------------------
+// Mock API
+// ----------------------
+const API = {
+  getRevenueData: async (): Promise<RevenueData> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            total: 7852000,
+            change: 2.1,
+            period: "1-12 Dec, 2020",
+            data: [
+              { day: "01", last6days: 450000, lastWeek: 420000 },
+              { day: "02", last6days: 520000, lastWeek: 480000 },
+              { day: "03", last6days: 580000, lastWeek: 540000 },
+              { day: "04", last6days: 490000, lastWeek: 510000 },
+              { day: "05", last6days: 750000, lastWeek: 600000 },
+              { day: "06", last6days: 680000, lastWeek: 620000 },
+              { day: "07", last6days: 720000, lastWeek: 650000 },
+              { day: "08", last6days: 550000, lastWeek: 580000 },
+              { day: "09", last6days: 620000, lastWeek: 600000 },
+              { day: "10", last6days: 590000, lastWeek: 610000 },
+              { day: "11", last6days: 850000, lastWeek: 700000 },
+              { day: "12", last6days: 780000, lastWeek: 680000 },
+            ],
+          }),
+        500
+      )
+    ),
+
+  getOrderTimeData: async (): Promise<OrderTimeData> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            total: 1890,
+            period: "1-6 Dec, 2020",
+            breakdown: [
+              { name: "Morning", time: "8am - 12pm", value: 1200, color: "#C7CEFF" },
+              { name: "Afternoon", time: "1pm - 4pm", value: 1890, color: "#5A6ACF" },
+              { name: "Evening", time: "5pm - 8pm", value: 910, color: "#8593ED" },
+            ],
+          }),
+        500
+      )
+    ),
+
+  getRatingsData: async (): Promise<Rating[]> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve([
+            { label: "Hygiene", value: 85, color: "#6463D6", size: 80, position: "top-0 left-16" },
+            { label: "Packaging", value: 92, color: "#2FBFDE", position: "top-24 left-0" },
+            { label: "Food Taste", value: 74, color: "#F99C30", position: "top-12 left-28" },
+          ]),
+        500
+      )
+    ),
+
+  getMostOrderedFoods: async (): Promise<Food[]> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve([
+            { name: "Fresh Salad Bowl", price: 45_000, image: "/images/salad-bowl.png" },
+            { name: "Chicken Noodles", price: 75_000, image: "/images/noodles.png" },
+            { name: "Smoothie Fruits", price: 45_000, image: "/images/smoothie.png" },
+            { name: "Hot Chicken Wings", price: 45_000, image: "/images/wings.png" },
+          ]),
+        500
+      )
+    ),
+
+  getOrderTrendData: async (): Promise<OrderTrendData> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            total: 2568,
+            change: 2.1,
+            period: "1-6 Dec, 2020",
+            data: [
+              { day: "01", last6days: 280, lastWeek: 350 },
+              { day: "02", last6days: 220, lastWeek: 200 },
+              { day: "03", last6days: 400, lastWeek: 240 },
+              { day: "04", last6days: 250, lastWeek: 260 },
+              { day: "05", last6days: 320, lastWeek: 490 },
+              { day: "06", last6days: 380, lastWeek: 340 },
+            ],
+          }),
+        500
+      )
+    ),
+};
+
+
 const Dashboard = () => {
-  const [revenueData, setRevenueData] = useState(null);
-  const [orderTimeData, setOrderTimeData] = useState(null);
-  const [ratingsData, setRatingsData] = useState(null);
-  const [mostOrderedFoods, setMostOrderedFoods] = useState(null);
-  const [orderTrendData, setOrderTrendData] = useState(null);
+  const [revenueData, setRevenueData] = useState<RevenueData | null>(null);
+  const [orderTimeData, setOrderTimeData] = useState<OrderTimeData | null>(null);
+  const [ratingsData, setRatingsData] = useState<Rating[] | null>(null);
+  const [mostOrderedFoods, setMostOrderedFoods] = useState<Food[] | null>(null);
+  const [orderTrendData, setOrderTrendData] = useState<OrderTrendData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const CustomTooltip = ({ active, payload }) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
-        const data = payload[0].payload;
-        return (
+      const data = payload[0].payload;
+      return (
         <div className="bg-purple-900 text-white p-3 rounded shadow-lg min-w-[120px]">
-            <div className="font-bold">{data.name}</div>
-            <div className="text-gray-300 text-xs">{data.time}</div>
-            <div className="text-lg font-semibold">{data.value.toLocaleString()} orders</div>
+          <div className="font-bold">{data.name}</div>
+          <div className="text-gray-300 text-xs">{data.time}</div>
+          <div className="text-lg font-semibold">{data.value.toLocaleString()} orders</div>
         </div>
-        );
+      );
     }
     return null;
-    };
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [revenue, orderTime, ratings, foods, orderTrend] =
-          await Promise.all([
-            API.getRevenueData(),
-            API.getOrderTimeData(),
-            API.getRatingsData(),
-            API.getMostOrderedFoods(),
-            API.getOrderTrendData(),
-          ]);
+        const [revenue, orderTime, ratings, foods, orderTrend] = await Promise.all([
+          API.getRevenueData(),
+          API.getOrderTimeData(),
+          API.getRatingsData(),
+          API.getMostOrderedFoods(),
+          API.getOrderTrendData(),
+        ]);
 
         setRevenueData(revenue);
         setOrderTimeData(orderTime);
@@ -156,11 +198,10 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
@@ -169,7 +210,6 @@ const Dashboard = () => {
         </div>
       </div>
     );
-  }
 
   return (
     <div className="p-10">

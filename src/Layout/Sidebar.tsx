@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Logo from "/images/logo.svg";
 import { MdOutlineBarChart } from "react-icons/md";
 import { FaCartShopping } from "react-icons/fa6";
