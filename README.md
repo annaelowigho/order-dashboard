@@ -1,23 +1,27 @@
-# order-dashboard
+# Order Dashboard
 
-This is a food ordering dashboard that shows a most order food, 
+A food ordering dashboard that displays insights such as most ordered foods and order trends using visual charts.
 
 ## Live Demo
-[View Live Site](https://your-live-link.com)
+[View Live Site](https://order-dashboard-wheat.vercel.app/)
 
 ## Features
-- Shows different charts to track food order
+- Displays charts for tracking food orders
+- Shows most ordered food items
+- Clean and responsive dashboard layout
 
 ## Built With
-- React 
+- React
+- JavaScript
+- CSS / Tailwind CSS (if used)
 
 ## Getting Started
 
-To run this project locally, follow these steps:
+Follow the steps below to run the project locally.
 
 ### Installation
 ```bash
 git clone https://github.com/annaelowigho/order-dashboard.git
-cd project-name
+cd order-dashboard
 npm install
 npm run dev
